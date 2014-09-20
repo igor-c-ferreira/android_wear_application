@@ -3,6 +3,10 @@ package br.com.zapimoveis.wearapplication;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.wearable.view.DismissOverlayView;
@@ -28,12 +32,14 @@ import com.google.android.gms.wearable.Wearable;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends Activity implements DataApi.DataListener, ConnectionCallbacks, OnConnectionFailedListener {
+public class MainActivity extends Activity implements DataApi.DataListener, ConnectionCallbacks,
+        OnConnectionFailedListener, SensorEventListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final long TIMEOUT_MS = 1000;
     private static final String COUNT_KEY = "COUNT_KEY";
     private static final String IMAGE_RESOURCE = "IMAGE_RESOURCE";
+    private static final int SENSOR_TYPE_HEARTRATE = 65562;
 
     private TextView mTextView;
     private TextView mSecondTextView;
@@ -41,6 +47,8 @@ public class MainActivity extends Activity implements DataApi.DataListener, Conn
 //    private DismissOverlayView mDismissOverlay;
 
     private GoogleApiClient mGoogleClient;
+    private SensorManager mSensorManager;
+    private Sensor mHeartRateSensor;
 //    private GestureDetector mDetector;
 
     public Bitmap loadBitmapFromAsset(Asset asset) {
@@ -102,6 +110,13 @@ public class MainActivity extends Activity implements DataApi.DataListener, Conn
                     }
                 });
 
+                mSensorManager = ((SensorManager)getSystemService(SENSOR_SERVICE));
+
+                mHeartRateSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
+//                mHeartRateSensor = mSensorManager.getDefaultSensor(SENSOR_TYPE_HEARTRATE);
+
+                mSensorManager.registerListener(MainActivity.this,mHeartRateSensor,3);
+
                 mGoogleClient = new GoogleApiClient.Builder(MainActivity.this)
                         .addApi(Wearable.API)
                         .addConnectionCallbacks(MainActivity.this)
@@ -128,6 +143,11 @@ public class MainActivity extends Activity implements DataApi.DataListener, Conn
             Wearable.DataApi.removeListener(mGoogleClient, this);
             mGoogleClient.disconnect();
         }
+
+        if (null != mSensorManager) {
+            mSensorManager.unregisterListener(this);
+        }
+
         super.onStop();
     }
 
@@ -179,5 +199,16 @@ public class MainActivity extends Activity implements DataApi.DataListener, Conn
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed: " + connectionResult.toString());
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        Log.d(TAG, "sensor event: " + sensorEvent.accuracy + " = " + sensorEvent.values[0]);
+        mSecondTextView.setText(String.format("accuracy: %s / value: %s", sensorEvent.accuracy, sensorEvent.values[0]));
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+        Log.d(TAG, "accuracy changed: " + i);
     }
 }

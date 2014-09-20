@@ -7,5 +7,6 @@
     <string name="notification_message">Notificacao</string>
     <string name="reply_label">Texto</string>
     <string name="notification_activity_name">NotificationActivity</string>
+    <string name="title_activity_sensor">SensorActivity</string>
 
 </resources>

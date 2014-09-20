@@ -164,14 +164,15 @@ public class MainActivity extends Activity {
                     R.drawable.photo
             ));
 
-            Notification secondPage = new NotificationCompat.Builder(getActivity())
-                    .setStyle(bigPictureStyle)
+            Notification secondPage = new NotificationCompat.WearableExtender()
+                    .setHintShowBackgroundOnly(true)
+                    .extend(new NotificationCompat.Builder(getActivity())
+                            .setStyle(bigPictureStyle))
                     .build();
 
             Notification fullNotification = new NotificationCompat.WearableExtender()
                     .addPage(secondPage)
                     .addAction(voiceAction)
-                    .setHintShowBackgroundOnly(false)
                     .setBackground(BitmapFactory.decodeResource(
                             getActivity().getResources(),
                             R.drawable.photo
