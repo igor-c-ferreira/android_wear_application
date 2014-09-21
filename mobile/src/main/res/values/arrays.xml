@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="reply_choices">
-        <item>Sim</item>
-        <item>Não</item>
+        <item>@string/yes</item>
+        <item>@string/no</item>
     </string-array>
 </resources>

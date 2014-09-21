@@ -76,7 +76,7 @@ public class MainActivity extends Activity {
         private static final String COUNT_KEY = "COUNT_KEY";
         private static final String TAG = PlaceholderFragment.class.getSimpleName();
         private static final String IMAGE_RESOURCE = "IMAGE_RESOURCE";
-        private static final int NOTIFICATION_ID = 23456;
+        public static final int NOTIFICATION_ID = 23456;
         public static final String EXTRA_VOICE_REPLY = "EXTRA_VOICE_REPLY";
         private GoogleApiClient mGoogleApiClient;
         private Button mHelloWorldButton;
@@ -156,7 +156,8 @@ public class MainActivity extends Activity {
                     .setContentText("New Notification")
                     .setContentTitle("Notification")
                     .setContentIntent(pendingIntent)
-                    .setStyle(bigTextStyle);
+                    .setStyle(bigTextStyle)
+                    .setAutoCancel(true);
 
             NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
             bigPictureStyle.bigPicture(BitmapFactory.decodeResource(
@@ -178,7 +179,6 @@ public class MainActivity extends Activity {
                             R.drawable.photo
                     ))
                     .extend(builder)
-                    .setAutoCancel(true)
                     .build();
 
             NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getActivity());

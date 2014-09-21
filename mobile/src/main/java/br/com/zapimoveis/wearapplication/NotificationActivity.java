@@ -3,6 +3,7 @@ package br.com.zapimoveis.wearapplication;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.RemoteInput;
 import android.widget.TextView;
 
@@ -19,6 +20,9 @@ public class NotificationActivity extends Activity
         if(message != null) {
             mTextView.setText(message);
         }
+
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+        managerCompat.cancel(MainActivity.PlaceholderFragment.NOTIFICATION_ID);
     }
 
     private CharSequence getMessageText(Intent intent) {
