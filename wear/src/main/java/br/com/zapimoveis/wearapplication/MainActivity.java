@@ -133,6 +133,9 @@ public class MainActivity extends Activity implements DataApi.DataListener, Conn
                         .addConnectionCallbacks(MainActivity.this)
                         .addOnConnectionFailedListener(MainActivity.this)
                         .build();
+
+                Wearable.NodeApi.addListener(mGoogleClient, MainActivity.this);
+
                 mGoogleClient.connect();
             }
         });
