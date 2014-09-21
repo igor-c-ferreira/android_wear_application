@@ -165,6 +165,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Conn
             @Override
             public void onClick(View v) {
                 PutDataMapRequest dataMap = PutDataMapRequest.create("/open_activity");
+                dataMap.getDataMap().putLong("TIMESTAMP", SystemClock.currentThreadTimeMillis());
                 PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
                         .putDataItem(mGoogleClient, dataMap.asPutDataRequest());
                 pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
