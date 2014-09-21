@@ -63,15 +63,23 @@ public class WearService extends WearableListenerService {
                     DATA_ITEM_RECEIVED_PATH, payload);
 
             if(uri.getPath().equals("/open_activity")) {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
+                openActivity();
             }
         }
+    }
+
+    protected void openActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         super.onMessageReceived(messageEvent);
+        if(messageEvent.getPath().equals("/open_activity")) {
+            openActivity();
+        }
     }
 
     @Override
