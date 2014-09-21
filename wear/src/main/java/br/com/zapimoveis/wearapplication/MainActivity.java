@@ -37,6 +37,7 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends Activity implements DataApi.DataListener, ConnectionCallbacks,
@@ -134,8 +135,6 @@ public class MainActivity extends Activity implements DataApi.DataListener, Conn
                         .addOnConnectionFailedListener(MainActivity.this)
                         .build();
 
-                Wearable.NodeApi.addListener(mGoogleClient, MainActivity.this);
-
                 mGoogleClient.connect();
             }
         });
@@ -168,6 +167,19 @@ public class MainActivity extends Activity implements DataApi.DataListener, Conn
     @Override
     public void onConnected(Bundle bundle) {
         Wearable.DataApi.addListener(mGoogleClient, this);
+        Wearable.NodeApi.addListener(mGoogleClient, MainActivity.this);
+
+        PendingResult<NodeApi.GetConnectedNodesResult> result = Wearable.NodeApi.getConnectedNodes(mGoogleClient);
+        result.setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+            @Override
+            public void onResult(NodeApi.GetConnectedNodesResult getConnectedNodesResult) {
+                List<Node> nodeList = getConnectedNodesResult.getNodes();
+                if(nodeList.size() > 0) {
+                    nodeId = nodeList.get(0).getId();
+                }
+            }
+        });
+
         mOpenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
