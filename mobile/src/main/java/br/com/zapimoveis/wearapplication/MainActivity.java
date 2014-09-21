@@ -194,7 +194,7 @@ public class MainActivity extends Activity {
                     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.photo);
                     Asset asset = createAssetFromBitmap(bitmap);
 
-                    PutDataMapRequest dataMap = PutDataMapRequest.create("/count");
+                    PutDataMapRequest dataMap = PutDataMapRequest.create("/update");
                     dataMap.getDataMap().putLong(COUNT_KEY, SystemClock.currentThreadTimeMillis());
                     dataMap.getDataMap().putAsset(IMAGE_RESOURCE, asset);
                     PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi

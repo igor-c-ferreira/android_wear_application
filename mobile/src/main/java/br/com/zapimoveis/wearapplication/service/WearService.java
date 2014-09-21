@@ -1,5 +1,6 @@
 package br.com.zapimoveis.wearapplication.service;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
@@ -16,10 +17,11 @@ import com.google.android.gms.wearable.WearableListenerService;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import br.com.zapimoveis.wearapplication.MainActivity;
+
 public class WearService extends WearableListenerService {
 
     private static final String TAG = WearService.class.getSimpleName();
-    private static final String START_ACTIVITY_PATH = "/start-activity";
     private static final String DATA_ITEM_RECEIVED_PATH = "/data-item-received";
 
     public WearService() {}
@@ -59,6 +61,11 @@ public class WearService extends WearableListenerService {
             // Send the RPC
             Wearable.MessageApi.sendMessage(googleApiClient, nodeId,
                     DATA_ITEM_RECEIVED_PATH, payload);
+
+            if(uri.getPath().equals("/open_activity")) {
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+            }
         }
     }
 

@@ -2,8 +2,8 @@
 <resources>
 
     <string name="app_name">WearApplication</string>
-    <string name="hello_round">Hello Round World!</string>
-    <string name="hello_square">Hello Square World!</string>
+    <string name="hello_round">Hello Round</string>
+    <string name="hello_square">Hello Square</string>
     <string name="title_activity_notification">NotificationActivity</string>
     <string name="hello_notification_round">\"Hello Notification Round\"</string>
     <string name="hello_notification_square">\"Hello Notification Square\"</string>
@@ -11,5 +11,6 @@
     <string name="second_hello_square">Relative Layout</string>
     <string name="resource">Resource</string>
     <string name="long_press_hint">Long press to dismiss</string>
+    <string name="button_text">Abrir Activity</string>
 
 </resources>

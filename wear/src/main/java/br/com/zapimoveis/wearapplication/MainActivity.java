@@ -9,12 +9,14 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.wearable.view.DismissOverlayView;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,11 +24,14 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import java.io.InputStream;
@@ -44,6 +49,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Conn
     private TextView mTextView;
     private TextView mSecondTextView;
     private ImageView mImageView;
+    private Button mOpenButton;
 //    private DismissOverlayView mDismissOverlay;
 
     private GoogleApiClient mGoogleClient;
@@ -84,6 +90,7 @@ public class MainActivity extends Activity implements DataApi.DataListener, Conn
                 mTextView = (TextView) stub.findViewById(R.id.text);
                 mSecondTextView = (TextView) stub.findViewById(R.id.second_text);
                 mImageView = (ImageView) stub.findViewById(R.id.image);
+                mOpenButton = (Button) stub.findViewById(R.id.open_button);
 
 //                mDismissOverlay = (DismissOverlayView) stub.findViewById(R.id.dismiss_overlay);
 //
@@ -154,10 +161,29 @@ public class MainActivity extends Activity implements DataApi.DataListener, Conn
     @Override
     public void onConnected(Bundle bundle) {
         Wearable.DataApi.addListener(mGoogleClient, this);
+        mOpenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PutDataMapRequest dataMap = PutDataMapRequest.create("/open_activity");
+                PendingResult<DataApi.DataItemResult> pendingResult = Wearable.DataApi
+                        .putDataItem(mGoogleClient, dataMap.asPutDataRequest());
+                pendingResult.setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
+                    @Override
+                    public void onResult(DataApi.DataItemResult dataItemResult) {
+                        if (dataItemResult.getStatus().isSuccess()) {
+                            Log.d(TAG, "Data item set: " + dataItemResult.getDataItem().getUri());
+                        }
+                    }
+                });
+            }
+        });
     }
 
     @Override
-    public void onConnectionSuspended(int i) {}
+    public void onConnectionSuspended(int i) {
+        Wearable.DataApi.removeListener(mGoogleClient,this);
+        mOpenButton.setOnClickListener(null);
+    }
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
@@ -171,21 +197,22 @@ public class MainActivity extends Activity implements DataApi.DataListener, Conn
                     Log.d(TAG, "DataItem changed: " + event.getDataItem().getUri());
 
                     DataMapItem dataItem = DataMapItem.fromDataItem(event.getDataItem());
-                    final long count = dataItem.getDataMap().getLong(COUNT_KEY);
-
-                    Asset profileAsset = dataItem.getDataMap().getAsset(IMAGE_RESOURCE);
-                    final Bitmap bitmap = loadBitmapFromAsset(profileAsset);
 
                     Handler mainHandler = new Handler(MainActivity.this.getMainLooper());
 
-                    Runnable myRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            mImageView.setImageBitmap(bitmap);
-                            mTextView.setText(String.valueOf(count));
-                        }
-                    };
-                    mainHandler.post(myRunnable);
+                    if(dataItem.getUri().getPath().equals("/update")) {
+                        final long count = dataItem.getDataMap().getLong(COUNT_KEY);
+                        Asset profileAsset = dataItem.getDataMap().getAsset(IMAGE_RESOURCE);
+                        final Bitmap bitmap = loadBitmapFromAsset(profileAsset);
+                        Runnable myRunnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                mImageView.setImageBitmap(bitmap);
+                                mTextView.setText(String.valueOf(count));
+                            }
+                        };
+                        mainHandler.post(myRunnable);
+                    }
 
                     break;
                 }

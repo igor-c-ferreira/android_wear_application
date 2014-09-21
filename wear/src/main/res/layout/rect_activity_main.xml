@@ -13,11 +13,18 @@
         android:layout_alignParentTop="true"
         android:text="@string/hello_square" />
 
+    <Button android:id="@+id/open_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text"
+        android:textSize="12sp"
+        android:text="@string/button_text"/>
+
     <ImageView android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/second_text"
-        android:layout_below="@+id/text"
+        android:layout_below="@+id/open_button"
         android:contentDescription="@string/resource"
         tools:src="@drawable/ic_launcher"/>
 
